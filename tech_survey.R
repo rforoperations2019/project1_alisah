@@ -18,11 +18,15 @@
 # • Your final app must work when deployed to shinyapps.io
 
 
-setwd('~/CMU/Semester_3/R_Shiny/Project_1')
+setwd('~/CMU/Semester_3/R_Shiny/project1_alisah/')
 
 library(readr)
-tech <- read_csv("~/CMU/Semester_3/R_Shiny/Project_1/mental-heath-in-tech-2016_20161114.csv")
-
+library(shiny)
+library(shinydashboard)
+library(ggplot2)
+library(stringr)
+tech <- read_csv("~/CMU/Semester_3/R_Shiny/project1_alisah/mental-heath-in-tech-2016_20161114.csv")
+tech <- data.frame(tech)
 
 tech <- tech[rowSums(is.na(tech)) < ncol(tech)/3, ]  #removing rows where more 
                                                     #than 1/3 responses are null
@@ -31,8 +35,8 @@ tech <- tech[,colSums(is.na(tech)) < nrow(tech)/4 ]   #removing columns where mo
 
 tech <- tech[-c(16:27)]    #removing columns about previous employers                                                      #than 1/3 of values are null
 colnames(tech)
-tech <- tech[!(tech$`Are you self-employed?`==1),] #removing self-employed observations
-tech <- tech[,-c(5, 6,7, 13, 32, 33)]
+tech <- tech[!(tech$Are.you.self.employed.==1),] #removing self-employed observations
+tech <- tech[,-c(1, 5, 6,7, 13, 32, 33)]
 
 
 for (i in colnames(tech)){
@@ -40,9 +44,9 @@ for (i in colnames(tech)){
   print(table(tech[[i]]))
 }
 
-colnames(tech)[colnames(tech)=='How many employees does your company or organization have?'] <- "num_employees"
-colnames(tech)[colnames(tech)=='Does your employer provide mental health benefits as part of healthcare coverage?'] <- "mh_benefits"
-
+colnames(tech)[colnames(tech)=='How.many.employees.does.your.company.or.organization.have.'] <- "num_employees"
+colnames(tech)[colnames(tech)=='Does.your.employer.provide.mental.health.benefits.as.part.of.healthcare.coverage.'] <- "mh_benefits"
+colnames(tech)[colnames(tech)=='Is.your.employer.primarily.a.tech.company.organization.'] <- "tech_co"
 
 
 tech$mh_benefits = str_wrap(tech$mh_benefits, width = 10)
@@ -58,4 +62,6 @@ plot +
   xlab('Survey Responses') +
   ylab('Count') +
   ggtitle("Does your employer offer mental health benefits?\nby number of employees at company")
+
+
 
