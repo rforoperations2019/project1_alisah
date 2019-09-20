@@ -13,24 +13,37 @@ library(ggplot2)
 library(stringr)
 library(DT)
 
-ui <- dashboardPage(
-  dashboardHeader(title = "Mental Health in Tech Survey"),
-  dashboardSidebar(),
-  dashboardBody(
-    # Boxes need to be put in a row (or column)
-    fluidRow(
-      box(DTOutput("data", height = 250)),
-      
-      box(
-        title = "Controls",
-        radioButtons("type", 
-                     "Show survey data for:", 
-                     choices = c("Employees at Tech Companies" = 1,
-                       "Employees at Non-Tech Companies" = 0))
-      )
-    )
+# Application header & title ----------------------------------------------
+header <- dashboardHeader(title = "Mental Health in Tech Survey Dashboard")
+
+sidebar <- sidebar <- dashboardSidebar(
+  sidebarMenu(
+    id = "tabs",
+    
+    menuItem("The Data", icon = icon("table"), tabName = "data"),
+    
+    radioButtons("type", 
+                 "Show survey data for:", 
+                 choices = c("Employees at Tech Companies" = 1,
+                             "Employees at Non-Tech Companies" = 0))
+
   )
 )
+
+body <- dashboardBody(tabItems(
+  
+  tabItem("data",
+          fluidPage(
+            box(title = "IDK", DT::dataTableOutput("data", height = 250))
+              
+            )
+          ))
+)
+
+
+ui <- dashboardPage(header, sidebar, body)
+
+
 
 server <- function(input, output) {
   tech_subset <- reactive({
@@ -44,10 +57,7 @@ server <- function(input, output) {
                   rownames = FALSE)
   })
 
-  output$plot1 <- renderPlot({
-    data <- histdata[seq_len(input$slider)]
-    hist(data)
-  })
+
 }
 
 
