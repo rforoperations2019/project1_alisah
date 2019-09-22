@@ -41,11 +41,10 @@ sidebar <- sidebar <- dashboardSidebar(
                  "Select Survey Question",
                  choices = c("Does your employer offer mental health benefits?" = 
                                "mh_benefits",
-                             "Do you think you could take work leave for a mental health
+                             "How easy would it be to take work leave for a mental health
                              issue?" = "mh_work_leave",
-                             "If you took advantage of mental health resources,
-                             would your anonymity be protected?" = "anonymity_protected"))
-
+                             "Do you feel your employer takes mental health
+                             as seriously as physical health?" = "mh_serious_ph"))
   )
 )
 
@@ -81,6 +80,22 @@ server <- function(input, output) {
     subset(tech, tech_co == input$type)
   }) 
   
+  plot_title <- reactive({
+    req(input$xvar)
+    if (input$xvar == 'mh_benefits') {
+      title <- "Question: Does your employer offer mental
+      health benefits as part of their healthcare?"
+    }
+    if (input$xvar == 'mh_work_leave') {
+      title <- "Question: Asking for medical leave from work for
+      a mental health issue would be..."
+    }
+    if (input$xvar == 'mh_serious_ph') {
+      title <- "Question: Does your employer take mental health
+      as seriously as physical health?"
+    }
+    return(title)
+  })
   # Creating a data table
   output$data <- DT::renderDataTable({
     DT::datatable(tech_subset(),
@@ -90,19 +105,12 @@ server <- function(input, output) {
   
   # Code for bar chart with variable survey question input
   output$bars <- renderPlot({
-    plot <- ggplot(transform(tech_subset(), 
-                             num_employees = factor(num_employees, 
-                                                    levels = c('1 to 5', 
-                                                               '6 to 25','26-100', 
-                                                               '100-500',
-                                                               '500-1000','More than 1000')))) +
+    plot <- ggplot(tech_subset()) +
       geom_bar(aes_string(x=input$xvar)) + 
       facet_wrap(~ num_employees, ncol=2)
     plot +
-      xlab('Survey Responses') +
-      ylab('Count') +
-      scale_x_discrete(labels = wrap_format(8)) +
-      ggtitle("Does your employer offer mental health benefits?\nby number of employees at company")
+      labs(x = 'Survey Responses', y = 'Count', title = plot_title()) +
+      scale_x_discrete(labels = wrap_format(8))
     
   })
 
