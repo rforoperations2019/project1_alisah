@@ -8,7 +8,7 @@
 #   • Include at least:
 #   • Three (3) input/filters
 # • Three (3) single numeric based boxes/gauges
-# • One (1) datatable
+# • One (1) datatable CHECK
 # • Three (3) interactive and reactively responsive charts. (use ggplot2 for now)
 # • These elements should be places throughout a dashboard with at least
 # three (3) pages or tabs with an analytical themes or question about the
@@ -25,6 +25,7 @@ library(shiny)
 library(shinydashboard)
 library(ggplot2)
 library(stringr)
+
 tech <- read_csv("~/CMU/Semester_3/R_Shiny/project1_alisah/mental-heath-in-tech-2016_20161114.csv")
 tech <- data.frame(tech)
 
@@ -38,11 +39,14 @@ colnames(tech)
 tech <- tech[!(tech$Are.you.self.employed.==1),] #removing self-employed observations
 tech <- tech[,-c(1, 5, 6,7, 13, 30, 32, 33)]
 
+# 
+# for (i in colnames(tech)){
+#   print(i)
+#   print(table(tech[[i]]))
+# }
 
-for (i in colnames(tech)){
-  print(i)
-  print(table(tech[[i]]))
-}
+
+#Recoding all columns for usability while creating the app
 
 colnames(tech)[colnames(tech)=='How.many.employees.does.your.company.or.organization.have.'] <- "num_employees"
 colnames(tech)[colnames(tech)=='Does.your.employer.provide.mental.health.benefits.as.part.of.healthcare.coverage.'] <- "mh_benefits"
@@ -54,35 +58,70 @@ colnames(tech)[colnames(tech)=="If.you.have.a.mental.health.issue..do.you.feel.t
 colnames(tech)[colnames(tech)=="If.you.have.a.mental.health.issue..do.you.feel.that.it.interferes.with.your.work.when.being.treated.effectively."] <- "interferes_when_treated"
 colnames(tech)[colnames(tech)=="Have.you.ever.sought.treatment.for.a.mental.health.issue.from.a.mental.health.professional."] <- "ever_treatment"
 colnames(tech)[colnames(tech)=="Have.you.been.diagnosed.with.a.mental.health.condition.by.a.medical.professional."] <- "ever_diagnosed"
-colnames(tech)[colnames(tech)=="Do.you.currently.have.a.mental.health.disorder."] <- "current_mh_disorder?"
-colnames(tech)[colnames(tech)=="Have.you.had.a.mental.health.disorder.in.the.past."] <- "past_mh_disorder?"
-colnames(tech)[colnames(tech)=="Do.you.have.a.family.history.of.mental.illness." ] <- "fam_history_mental_illness?"
-colnames(tech)[colnames(tech)=="Is.your.anonymity.protected.if.you.choose.to.take.advantage.of.mental.health.or.substance.abuse.treatment.resources.provided.by.your.employer." ] <- "anonymity_protected?"
-colnames(tech)[colnames(tech)=="If.a.mental.health.issue.prompted.you.to.request.a.medical.leave.from.work..asking.for.that.leave.would.be."  ] <- "mh_work_leave?"
-colnames(tech)[colnames(tech)=="Do.you.think.that.discussing.a.mental.health.disorder.with.your.employer.would.have.negative.consequences."] <- "discuss_mh_employer_neg_consequences?"
-colnames(tech)[colnames(tech)=="Do.you.think.that.discussing.a.physical.health.issue.with.your.employer.would.have.negative.consequences."     ] <- "discuss_ph_employer_neg_consequences?"
-colnames(tech)[colnames(tech)=="Would.you.feel.comfortable.discussing.a.mental.health.disorder.with.your.coworkers."  ] <- "comfortable_discuss_mh_disorder_coworkers?"
-colnames(tech)[colnames(tech)=="Have.you.heard.of.or.observed.negative.consequences.for.co.workers.who.have.been.open.about.mental.health.issues.in.your.workplace." ] <- "neg_consequences_mh_workplace?"
-colnames(tech)[colnames(tech)=="Would.you.be.willing.to.bring.up.a.physical.health.issue.with.a.potential.employer.in.an.interview." ] <- "ph_issue_interview?"
-colnames(tech)[colnames(tech)=="Would.you.bring.up.a.mental.health.issue.with.a.potential.employer.in.an.interview." ] <- "mh_issue_interview?"
-colnames(tech)[colnames(tech)=="Do.you.feel.that.being.identified.as.a.person.with.a.mental.health.issue.would.hurt.your.career."   ] <- "mh_identity_hurt_career?"
-colnames(tech)[colnames(tech)=="Do.you.think.that.team.members.co.workers.would.view.you.more.negatively.if.they.knew.you.suffered.from.a.mental.health.issue."   ] <- "coworkers_view_negatively?"
-colnames(tech)[colnames(tech)=="How.willing.would.you.be.to.share.with.friends.and.family.that.you.have.a.mental.illness."  ] <- "share_with_friends_family?"
-colnames(tech)[colnames(tech)=="Have.you.observed.or.experienced.an.unsupportive.or.badly.handled.response.to.a.mental.health.issue.in.your.current.or.previous.workplace." ] <- "unsupportive_mh_incident?"
+colnames(tech)[colnames(tech)=="Do.you.currently.have.a.mental.health.disorder."] <- "current_mh_disorder"
+colnames(tech)[colnames(tech)=="Have.you.had.a.mental.health.disorder.in.the.past."] <- "past_mh_disorder"
+colnames(tech)[colnames(tech)=="Do.you.have.a.family.history.of.mental.illness." ] <- "fam_history_mental_illness"
+colnames(tech)[colnames(tech)=="Is.your.anonymity.protected.if.you.choose.to.take.advantage.of.mental.health.or.substance.abuse.treatment.resources.provided.by.your.employer." ] <- "anonymity_protected"
+colnames(tech)[colnames(tech)=="If.a.mental.health.issue.prompted.you.to.request.a.medical.leave.from.work..asking.for.that.leave.would.be."  ] <- "mh_work_leave"
+colnames(tech)[colnames(tech)=="Do.you.think.that.discussing.a.mental.health.disorder.with.your.employer.would.have.negative.consequences."] <- "discuss_mh_employer_neg_consequences"
+colnames(tech)[colnames(tech)=="Do.you.think.that.discussing.a.physical.health.issue.with.your.employer.would.have.negative.consequences."     ] <- "discuss_ph_employer_neg_consequences"
+colnames(tech)[colnames(tech)=="Would.you.feel.comfortable.discussing.a.mental.health.disorder.with.your.coworkers."  ] <- "comfortable_discuss_mh_disorder_coworkers"
+colnames(tech)[colnames(tech)=="Have.you.heard.of.or.observed.negative.consequences.for.co.workers.who.have.been.open.about.mental.health.issues.in.your.workplace." ] <- "neg_consequences_mh_workplace"
+colnames(tech)[colnames(tech)=="Would.you.be.willing.to.bring.up.a.physical.health.issue.with.a.potential.employer.in.an.interview." ] <- "ph_issue_interview"
+colnames(tech)[colnames(tech)=="Would.you.bring.up.a.mental.health.issue.with.a.potential.employer.in.an.interview." ] <- "mh_issue_interview"
+colnames(tech)[colnames(tech)=="Do.you.feel.that.being.identified.as.a.person.with.a.mental.health.issue.would.hurt.your.career."   ] <- "mh_identity_hurt_career"
+colnames(tech)[colnames(tech)=="Do.you.think.that.team.members.co.workers.would.view.you.more.negatively.if.they.knew.you.suffered.from.a.mental.health.issue."   ] <- "coworkers_view_negatively"
+colnames(tech)[colnames(tech)=="How.willing.would.you.be.to.share.with.friends.and.family.that.you.have.a.mental.illness."  ] <- "share_with_friends_family"
+colnames(tech)[colnames(tech)=="Have.you.observed.or.experienced.an.unsupportive.or.badly.handled.response.to.a.mental.health.issue.in.your.current.or.previous.workplace." ] <- "unsupportive_mh_incident"
+colnames(tech)[colnames(tech)=="Do.you.feel.that.your.employer.takes.mental.health.as.seriously.as.physical.health."] <- "mh_serious_ph"
+# 
+# tech$mh_benefits = str_wrap(tech$mh_benefits, width = 10)
+# plot <- ggplot(transform(tech,
+#        num_employees = factor(num_employees,
+#                                 levels = c('1 to 5',
+#                                            '6 to 25','26-100',
+#                                            '100-500',
+#                                            '500-1000','More than 1000')))) +
+#   geom_bar(aes_string(x='mh_benefits')) +
+#   facet_wrap(num_employees ~.)
+# plot +
+#   xlab('Survey Responses') +
+#   ylab('Count') +
+#   ggtitle("Does your employer offer mental health benefits?\nby number of employees at company")
 
-tech$mh_benefits = str_wrap(tech$mh_benefits, width = 10)
-plot <- ggplot(transform(tech, 
-       num_employees = factor(num_employees, 
-                                levels = c('1 to 5', 
-                                           '6 to 25','26-100', 
-                                           '100-500',
-                                           '500-1000','More than 1000')))) +
-  geom_bar(aes_string(x='mh_benefits')) + 
-  facet_wrap(num_employees ~.)
-plot +
-  xlab('Survey Responses') +
-  ylab('Count') +
-  ggtitle("Does your employer offer mental health benefits?\nby number of employees at company")
 
+#Ordering factors by magnitude ---------------------------------------------------
 
+tech$num_employees = factor(tech$num_employees, 
+                       ordered = TRUE, 
+                       levels = c('1 to 5', 
+                                  '6 to 25','26-100', 
+                                  '100-500',
+                                  '500-1000','More than 1000'))
 
+pretty_numbers <- function(num_employees, value){
+  x = paste0("Number of employees: ", num_employees[[value]])
+  return(x)
+}
+  
+tech$mh_benefits = factor(tech$mh_benefits,
+                          ordered = TRUE,
+                          levels = c('Not eligible for coverage / N/A',
+                                     "I don't know",
+                                     "No",
+                                     "Yes"))
+
+tech$mh_work_leave = factor(tech$mh_work_leave,
+                          ordered = TRUE,
+                          levels = c("I don't know",
+                                     "Very easy",
+                                     "Somewhat easy",
+                                     "Neither easy nor difficult",
+                                     "Somewhat difficult",
+                                     "Very difficult"))
+
+tech$anonymity_protected = factor(tech$anonymity_protected,
+                                  ordered = TRUE,
+                                  levels = c("I don't know",
+                                             "No",
+                                             "Yes"))
