@@ -16,7 +16,8 @@ library(scales)
 source("tech_survey.R")
 
 # Application header & title ----------------------------------------------
-header <- dashboardHeader(title = "Mental Health in Tech Survey Dashboard")
+header <- dashboardHeader(title = "Mental Health in Tech Survey",
+                          titleWidth = 282) 
 
 
 # Application sidebar -----------------------------------------------------
@@ -38,7 +39,7 @@ sidebar <- sidebar <- dashboardSidebar(
     
     #Input for selecting a survey question to explore ------------------------
     selectInput("xvar",
-                 "Select Survey Question",
+                 "Select Survey Question to Explore via Bar Charts",
                  choices = c("Does your employer offer mental health benefits?" = 
                                "mh_benefits",
                              "How easy would it be to take work leave for a mental health
@@ -54,7 +55,7 @@ body <- dashboardBody(tabItems(
   # Data tab: features a data table ----------------------------------------------
   tabItem("data",
           fluidPage(
-            box(title = "IDK", DT::dataTableOutput("data"))
+            box(title = "The Data", DT::dataTableOutput("data"))
               
             )
           ),
@@ -62,13 +63,14 @@ body <- dashboardBody(tabItems(
   # Bar Chart tab: features bar charts with survey questions faceted by company size ----
   tabItem("barz",
           fluidPage(
+            box(title = "Main Plot", width = 12, plotOutput("plot_main")),
             box(title = "Bar Charts", width = 12, plotOutput("bars"))
           )))
 )
 
 
 # Putting everything together
-ui <- dashboardPage(header, sidebar, body)
+ui <- dashboardPage(header, sidebar, body, skin = "green")
 
 
 # Server function necessary to create my cool things.
@@ -83,16 +85,13 @@ server <- function(input, output) {
   plot_title <- reactive({
     req(input$xvar)
     if (input$xvar == 'mh_benefits') {
-      title <- "Question: Does your employer offer mental
-      health benefits as part of their healthcare?"
+      title <- "Question: Does your employer offer mental health benefits as part of their healthcare?"
     }
     if (input$xvar == 'mh_work_leave') {
-      title <- "Question: Asking for medical leave from work for
-      a mental health issue would be..."
+      title <- "Question: Asking for medical leave from work for a mental health issue would be..."
     }
     if (input$xvar == 'mh_serious_ph') {
-      title <- "Question: Does your employer take mental health
-      as seriously as physical health?"
+      title <- "Question: Does your employer take mental health as seriously as physical health?"
     }
     return(title)
   })
@@ -109,8 +108,23 @@ server <- function(input, output) {
       geom_bar(aes_string(x=input$xvar)) + 
       facet_wrap(~ num_employees, ncol=2)
     plot +
+      labs(x = 'Survey Responses', y = 'Count', title = plot_title(),
+           subtitle = "by size of company", 
+           caption = "Thanks to Kaggle for this dataset") +
+      scale_x_discrete(labels = wrap_format(8)) +
+      theme(plot.title = element_text( face="bold", size=17)) +
+      theme(axis.title = element_text(face="bold", size=13)) 
+      
+    
+  })
+  output$plot_main <- renderPlot({
+    plot_main <- ggplot(tech_subset()) +
+      geom_bar(aes_string(x=input$xvar)) 
+    plot_main +
       labs(x = 'Survey Responses', y = 'Count', title = plot_title()) +
-      scale_x_discrete(labels = wrap_format(8))
+      scale_x_discrete(labels = wrap_format(8)) +
+      theme(plot.title = element_text( face="bold", size=17)) +
+      theme(axis.title = element_text(face="bold", size=13)) 
     
   })
 
