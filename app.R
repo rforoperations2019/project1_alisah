@@ -54,8 +54,10 @@ body <- dashboardBody(tabItems(
   
   # Data tab: features a data table ----------------------------------------------
   tabItem("data",
-          fluidPage(
-            box(title = "The Data", DT::dataTableOutput("data"))
+          fluidRow(valueBoxOutput(outputId = "rows"),
+                   valueBoxOutput(outputId = "diagnosed"),
+                   valueBoxOutput(outputId = "treated")),
+            fluidRow(box(title = "The Data", DT::dataTableOutput("data")))
               
             )
           ),
@@ -65,7 +67,7 @@ body <- dashboardBody(tabItems(
           fluidPage(
             box(title = "Main Plot", width = 12, plotOutput("plot_main")),
             box(title = "Bar Charts", width = 12, plotOutput("bars"))
-          )))
+          ))
 )
 
 
@@ -82,6 +84,39 @@ server <- function(input, output) {
     subset(tech, tech_co == input$type)
   }) 
   
+  # Counting rows of the tech subset for the valueBox ------------------------
+  output$rows <- renderInfoBox({
+    num <- nrow(tech_subset())
+    
+    valueBox("Number of Responses", 
+            value = num, 
+            icon = icon("comment-dots"), color = "blue")
+  })
+  
+  # Counting number of people with mental illness for the valueBox ------------------------
+  output$diagnosed <- renderInfoBox({
+    mh_true <- nrow(subset(tech_subset(), ever_diagnosed == "Yes"))
+    
+    
+    valueBox("Respondents Previously Diagnosed 
+             with a Mental Health Condition", 
+            value = mh_true, 
+            icon = icon("brain"), color = "yellow") 
+  }) 
+  
+  # Counting the number of people treated for mental illness ------------
+  # Counting number of people with mental illness for the valueBox ------------------------
+  output$treated <- renderInfoBox({
+    treat_true <- nrow(subset(tech_subset(), ever_treatment == 1))
+    
+    
+    valueBox("Respondents Treated for 
+             a Mental Health Condition", 
+             value = treat_true, 
+             icon = icon("stethoscope"), color = "teal")
+  }) 
+  
+  # Creating a reactive plot title for bar charts --------------------
   plot_title <- reactive({
     req(input$xvar)
     if (input$xvar == 'mh_benefits') {
