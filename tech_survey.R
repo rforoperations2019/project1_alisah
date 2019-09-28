@@ -74,20 +74,6 @@ colnames(tech)[colnames(tech)=="Do.you.think.that.team.members.co.workers.would.
 colnames(tech)[colnames(tech)=="How.willing.would.you.be.to.share.with.friends.and.family.that.you.have.a.mental.illness."  ] <- "share_with_friends_family"
 colnames(tech)[colnames(tech)=="Have.you.observed.or.experienced.an.unsupportive.or.badly.handled.response.to.a.mental.health.issue.in.your.current.or.previous.workplace." ] <- "unsupportive_mh_incident"
 colnames(tech)[colnames(tech)=="Do.you.feel.that.your.employer.takes.mental.health.as.seriously.as.physical.health."] <- "mh_serious_ph"
-# 
-# tech$mh_benefits = str_wrap(tech$mh_benefits, width = 10)
-# plot <- ggplot(transform(tech,
-#        num_employees = factor(num_employees,
-#                                 levels = c('1 to 5',
-#                                            '6 to 25','26-100',
-#                                            '100-500',
-#                                            '500-1000','More than 1000')))) +
-#   geom_bar(aes_string(x='mh_benefits')) +
-#   facet_wrap(num_employees ~.)
-# plot +
-#   xlab('Survey Responses') +
-#   ylab('Count') +
-#   ggtitle("Does your employer offer mental health benefits?\nby number of employees at company")
 
 
 #Ordering factors by magnitude ---------------------------------------------------
