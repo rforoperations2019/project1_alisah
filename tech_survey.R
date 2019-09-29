@@ -1,7 +1,7 @@
 
 
 
-setwd('~/CMU/Semester_3/R_Shiny/project1_alisah/')
+#setwd('~/CMU/Semester_3/R_Shiny/project1_alisah/')
 
 library(readr)
 library(shiny)
@@ -9,12 +9,13 @@ library(shinydashboard)
 library(ggplot2)
 library(stringr)
 
-tech <- read_csv("~/CMU/Semester_3/R_Shiny/project1_alisah/mental-heath-in-tech-2016_20161114.csv")
+tech <- read_csv("~/mental-heath-in-tech-2016_20161114.csv")
 tech <- data.frame(tech)
 
 tech <- tech[rowSums(is.na(tech)) < ncol(tech)/3, ]  #removing rows where more 
                                                     #than 1/3 responses are null
 tech <- tech[,colSums(is.na(tech)) < nrow(tech)/4 ]   #removing columns where more
+                                                      #than 1/4 responses are null 
 
 
 tech <- tech[-c(16:27)]    #removing columns about previous employers                                                      #than 1/3 of values are null
@@ -126,4 +127,5 @@ tech$discuss_mh_employer_neg_consequences = factor(tech$discuss_mh_employer_neg_
 tech$ever_treatment[tech$ever_treatment=="0"] <- "No"
 tech$ever_treatment[tech$ever_treatment=="1"] <- "Yes"
 
+save(tech, file = "tech.Rdata")
 
