@@ -22,11 +22,6 @@ colnames(tech)
 tech <- tech[!(tech$Are.you.self.employed.==1),] #removing self-employed observations
 tech <- tech[,-c(1, 5, 6,7, 13, 30, 32, 33)]
 
-# 
-# for (i in colnames(tech)){
-#   print(i)
-#   print(table(tech[[i]]))
-# }
 
 
 #Recoding all columns for usability while creating the app
