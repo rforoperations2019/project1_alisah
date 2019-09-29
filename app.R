@@ -13,15 +13,21 @@ library(ggplot2)
 library(stringr)
 library(DT)
 library(scales)
-source("tech_survey.R")
+load("tech.Rdata")
 
 # Application header & title ----------------------------------------------
 header <- dashboardHeader(title = "Mental Health in Tech Survey",
                           titleWidth = 282,
                           # Drop down menu with hard coded values ------------------------------
-                          dropdownMenu(type = "notifications",
-                                       notificationItem(text = "Be sure to breathe today", 
+                          dropdownMenu(type = "messages",
+                                       messageItem(from = "Alisa",
+                                                   message = "Be sure to breathe today", 
                                                         icon = icon("spa"))
+                          ),
+                          dropdownMenu(type = "notifications",
+                                       notificationItem(
+                                         text = HTML("Sample size is small; <br> selection bias likely!"),
+                                         icon = icon("warning"))
                           ))
 
 
