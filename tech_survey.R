@@ -1,21 +1,4 @@
-# Creating multiple types of visuals from the same data is an important way to convey
-# information to application users. Students will create a Dashboard using a static
-# download of an Open Data or a Dataset from their own place of employment (make
-#                                                                           sure you have permission to use it for this assignment first!)
-# Students may make their application in either flexdashboard or shinydashboard
-# layouts and deploy on shinyapps.io.
-# Directions:
-#   • Include at least:
-#   • Three (3) input/filters
-# • Three (3) single numeric based boxes/gauges
-# • One (1) datatable CHECK
-# • Three (3) interactive and reactively responsive charts. (use ggplot2 for now)
-# • These elements should be places throughout a dashboard with at least
-# three (3) pages or tabs with an analytical themes or question about the
-# data.
-# • On the server side your plots and tables must utilize the reactive function for
-# any and all datasets.
-# • Your final app must work when deployed to shinyapps.io
+
 
 
 setwd('~/CMU/Semester_3/R_Shiny/project1_alisah/')
@@ -148,13 +131,4 @@ tech$discuss_mh_employer_neg_consequences = factor(tech$discuss_mh_employer_neg_
 tech$ever_treatment[tech$ever_treatment=="0"] <- "No"
 tech$ever_treatment[tech$ever_treatment=="1"] <- "Yes"
 
-#mh_serious_ph, discuss_mh_employer_neg_consequences,
-# mh_identity_hurt_career, interferes_when_not_treated
 
-
-
-
-what <- ggplot(tech, 
-               aes(ever_treatment,
-                 fill = discuss_mh_employer_neg_consequences)) 
-what + geom_bar()
