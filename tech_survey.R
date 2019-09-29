@@ -75,6 +75,8 @@ colnames(tech)[colnames(tech)=="How.willing.would.you.be.to.share.with.friends.a
 colnames(tech)[colnames(tech)=="Have.you.observed.or.experienced.an.unsupportive.or.badly.handled.response.to.a.mental.health.issue.in.your.current.or.previous.workplace." ] <- "unsupportive_mh_incident"
 colnames(tech)[colnames(tech)=="Do.you.feel.that.your.employer.takes.mental.health.as.seriously.as.physical.health."] <- "mh_serious_ph"
 
+# Removing outliers from age variable; individuals above 60 are outliers -------
+tech <- subset(tech, age < 60 & age > 18)
 
 #Ordering factors by magnitude ---------------------------------------------------
 
@@ -111,3 +113,48 @@ tech$anonymity_protected = factor(tech$anonymity_protected,
                                   levels = c("I don't know",
                                              "No",
                                              "Yes"))
+
+tech$interferes_when_not_treated = factor(tech$interferes_when_not_treated,
+                                      ordered = TRUE,
+                                      levels = c("Not applicable to me",
+                                                 "Never",
+                                                 "Rarely",
+                                                 "Sometimes",
+                                                 "Often"))
+
+
+tech$mh_serious_ph = factor(tech$mh_serious_ph,
+                            ordered = TRUE,
+                            levels = c("No",
+                                       "I don't know",
+                                       "Yes"))
+
+tech$mh_identity_hurt_career = factor(tech$mh_identity_hurt_career,
+                                      ordered = TRUE,
+                                      levels = c("No, it has not",
+                                                 "No, I don't think it would",
+                                                 "Maybe",
+                                                 "Yes, I think it would",
+                                                 "Yes, it has"))
+
+tech$discuss_mh_employer_neg_consequences = factor(tech$discuss_mh_employer_neg_consequences,
+                                                   ordered = TRUE,
+                                                   levels = c("No",
+                                                              "Maybe",
+                                                              "Yes"))
+
+# Recoding 0/1 responses as Yes/No so humans understand it ----------
+
+tech$ever_treatment[tech$ever_treatment=="0"] <- "No"
+tech$ever_treatment[tech$ever_treatment=="1"] <- "Yes"
+
+#mh_serious_ph, discuss_mh_employer_neg_consequences,
+# mh_identity_hurt_career, interferes_when_not_treated
+
+
+
+
+what <- ggplot(tech, 
+               aes(ever_treatment,
+                 fill = discuss_mh_employer_neg_consequences)) 
+what + geom_bar()
